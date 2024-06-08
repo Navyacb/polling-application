@@ -6,6 +6,7 @@ const {checkSchema} = require('express-validator')
 const configDB = require('./config/database')
 const userController = require('./app/controllers/user-controller')
 const {userLoginValidationSchema,userRegisterValidationSchema} = require('./app/helper/user-validation')
+const { authentication } = require('./app/middlewears/authentication')
 
 const port = process.env.PORT
 const app = express()
@@ -16,6 +17,10 @@ configDB()
 
 app.post('/auth/register',checkSchema(userRegisterValidationSchema),userController.register)
 app.post('/auth/login',checkSchema(userLoginValidationSchema),userController.login)
+app.get('/users/account',authentication,userController.account)
+app.get('/auth/verify-token', authentication,userController.verifyToken)
+app.post('/auth/logout',userController.logout)
+
 
 app.listen(port,()=>{
     console.log(`server up and running on ${port}`)

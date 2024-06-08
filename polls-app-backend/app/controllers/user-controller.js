@@ -50,18 +50,46 @@ userController.login = async(req,res)=>{
         }
   
         const tokenData = { id: user._id }
-        const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY,{expiresIn:'10s'})
+        const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY,{expiresIn:'50s'})
         res.cookie("token",token,{
             httpOnly : true,
             sameSite : 'strict',
-            expires : new Date(new Date().getTime() + 24 * 60 * 60 * 1000),
+            expires : new Date(new Date().getTime() + 50 * 1000),
             secure: process.env.NODE_ENV === 'production',
-        }).json({ message: 'Login successful', name : `${user.username}` })
+        }).json({ message: 'Login successful'})
     }
     catch(error){
         res.status(500).json(error)
     }
 
+}
+
+userController.account = async(req,res)=>{
+    try{
+        const user = await User.findById({_id : req.user.id})
+        res.json(user)
+    }
+    catch(error){
+        res.status(500).json(error)
+    }
+}
+
+userController.verifyToken = async(req,res)=>{
+    try{
+        const user = await User.findById({_id : req.user.id})
+        if (!user) {
+            return res.status(401).json({ valid: false });
+        }
+        res.json({ valid: true, user: user })
+    }
+    catch(error){
+        res.status(500).json(error)
+    }
+}
+
+userController.logout = (req,res)=>{
+    res.clearCookie('token')
+    return res.redirect('/')
 }
 
 module.exports = userController

@@ -1,12 +1,13 @@
-import { useLocation } from "react-router-dom";
+import { useContext } from "react";
+import { UserAccountContextData } from "../../state-management/UserAccountContextData";
 
 const Home = ()=>{
 
-    const location = useLocation()
-    const name = location?.state?.name
+    const {userAccount} = useContext(UserAccountContextData)
+
 
     return (
-        <h1>{name ? `Hi ${name}!` : `Home component`}</h1>
+        <h1>{userAccount ? `Hi ${userAccount.username}!` : `Home component`}</h1>
     )
 }
 

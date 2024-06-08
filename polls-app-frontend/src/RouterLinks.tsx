@@ -1,8 +1,8 @@
 import {Routes,Route} from 'react-router-dom';
 import { routePath } from './constants/routePath';
-import Register from './components/register/Register';
+import Register from './pages/register/Register';
 import Home from './components/home/Home';
-import Login from './components/login/Login';
+import Login from './pages/login/Login';
 
 
 const RouterLinks = ()=>{

@@ -1,16 +1,11 @@
-import axios from "axios";
 import { ChangeEvent, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLoginApi } from "../../api/pollingAppApiMock";
 
 export const useLogin = (emailReg:string)=>{
-    const api = axios.create({
-        baseURL: 'http://localhost:3090', 
-        withCredentials: true, 
-    })
-
-    const [email,setEmail] = useState('')
+    const [email,setEmail] = useState(emailReg?emailReg:'')
     const [password,setPassword] = useState('')
-    const [errors,setErrors] = useState([])
+    const { mutate } = useLoginApi();
 
     const navigate = useNavigate()
 
@@ -25,29 +20,21 @@ export const useLogin = (emailReg:string)=>{
     }
 
     const handleLogin = async()=>{
-        const loginData = {
-            email: email || emailReg,
-            password
-        }
-        try{
-            const response = await api.post('/auth/login',loginData)
-            navigate('/',{state:{msg:response.data.message, name : response.data.name}})
-        }
-        catch(error){
-            if (axios.isAxiosError(error) && error.response) {
-                setErrors(error.response.data.errors)
-            } else {
-                console.error('Unexpected error:', error)
+
+        mutate(
+            { email, password },
+            {
+                onSuccess: (data) => {
+                    navigate('/', { state: { msg: data.message} });
+                },
             }
-        }
+        )
     }
 
     return ({
         handleChange,
         handleLogin,
-        errors,
         password,
         email
-    }
-    )
+    })
 }
