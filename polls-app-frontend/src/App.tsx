@@ -1,15 +1,15 @@
 import './App.css'
 import { MantineProvider } from '@mantine/core';
-import { BrowserRouter } from 'react-router-dom';
 import '@mantine/core/styles.css';
 import Header from './components/header/Header';
 import { ErrorMessageContextData, IError } from './state-management/ErrorMessageContextData';
-import { useEffect, useReducer } from 'react';
+import { useEffect, useMemo, useReducer } from 'react';
 import { IUser, UserAccountContextData, defaultUserAccount } from './state-management/UserAccountContextData';
 import { verifyToken } from './api/pollingAppApiMock';
+import { useQuery } from 'react-query';
+import { BrowserRouter } from 'react-router-dom';
 
 function App() {
- // const navigate = useNavigate()
 
   const errorReducer = (state:IError[],action:{ type: string, payload: IError[]})=>{
     switch(action.type){
@@ -36,57 +36,47 @@ function App() {
   const [errors,errorsDispatch] = useReducer(errorReducer,[] )
   const [userAccount,userAccountDispatch] = useReducer(userAccountReducer,defaultUserAccount)
 
-//   useEffect(() => {
-//     const interval = setInterval(async () => {
-//         
-//     }, 5000)try {
-//             const { valid, user } = await verifyToken();
-//             if (!valid) {
-//               userAccountDispatch({type:'remove',payload:defaultUserAccount})
-//              //   navigate('/login');
-//             }else{
-//               userAccountDispatch({ type: 'add', payload: user });
-//             }
-//         } catch (error) {
-//           userAccountDispatch({type:'remove',payload:defaultUserAccount})
-//           console.error('Unexpected error:', error)
-//          //   navigate('/login');
-//         }
 
-//     return () => clearInterval(interval)
-// }, []);
-
-useEffect(()=>{
-  (async ()=>{
-    try {
-      const { valid, user } = await verifyToken();
-      if (!valid) {
-        userAccountDispatch({type:'remove',payload:defaultUserAccount})
-        //   navigate('/login');
-      }else{
-        userAccountDispatch({ type: 'add', payload: user });
-      }
-    } catch (error) {
-      userAccountDispatch({type:'remove',payload:defaultUserAccount})
-      console.error('Unexpected error:', error)
-       //   navigate('/login');
-    }
-  })()
+const { data, error } = useQuery('verifyToken', verifyToken, {
+  retry: false, 
+  refetchOnWindowFocus: false,
 })
 
+
+useEffect(()=>{
+  if (data) {
+    if (data.valid) {
+        userAccountDispatch({ type: 'add', payload: data.user })
+    } else {
+        userAccountDispatch({ type: 'remove', payload: defaultUserAccount })
+    }
+  } else if (error) {
+      userAccountDispatch({ type: 'remove', payload: defaultUserAccount })
+  }
+},[data, error])
+
+const errorMessageContextValue = useMemo(
+  () => ({ errors, errorsDispatch }),
+  [errors, errorsDispatch]
+)
+
+const userAccountContextValue = useMemo(
+  () => ({ userAccount, userAccountDispatch }),
+  [userAccount, userAccountDispatch]
+)
 
 
 
   return (
-    <MantineProvider>
-      <BrowserRouter>
-        <ErrorMessageContextData.Provider value = {{errors,errorsDispatch}}>
-          <UserAccountContextData.Provider value={{userAccount,userAccountDispatch}}>
-            <Header/>
-          </UserAccountContextData.Provider>
-        </ErrorMessageContextData.Provider>
-      </BrowserRouter>
-    </MantineProvider>
+    <BrowserRouter>
+      <MantineProvider>
+          <ErrorMessageContextData.Provider value = {errorMessageContextValue}>
+            <UserAccountContextData.Provider value={userAccountContextValue}>
+              <Header/>
+            </UserAccountContextData.Provider>
+          </ErrorMessageContextData.Provider>
+      </MantineProvider>
+    </BrowserRouter>
   )
 }
 

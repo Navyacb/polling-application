@@ -50,11 +50,11 @@ userController.login = async(req,res)=>{
         }
   
         const tokenData = { id: user._id }
-        const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY,{expiresIn:'50s'})
+        const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY,{expiresIn:'500s'})
         res.cookie("token",token,{
             httpOnly : true,
             sameSite : 'strict',
-            expires : new Date(new Date().getTime() + 50 * 1000),
+            expires : new Date(new Date().getTime() + 500 * 1000),
             secure: process.env.NODE_ENV === 'production',
         }).json({ message: 'Login successful'})
     }
@@ -78,18 +78,18 @@ userController.verifyToken = async(req,res)=>{
     try{
         const user = await User.findById({_id : req.user.id})
         if (!user) {
-            return res.status(401).json({ valid: false });
+            return res.status(401).json({ valid: false, msg: "User not found" })
         }
         res.json({ valid: true, user: user })
     }
     catch(error){
-        res.status(500).json(error)
+        res.status(401).json({ valid: false, msg: "Invalid token" })
     }
 }
 
 userController.logout = (req,res)=>{
     res.clearCookie('token')
-    return res.redirect('/')
+    return res.status(200).json({ message: 'Logout successful' });
 }
 
 module.exports = userController

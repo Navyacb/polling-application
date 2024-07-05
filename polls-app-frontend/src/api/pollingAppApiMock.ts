@@ -69,18 +69,15 @@ export const useLoginApi = ()=>{
 
 export const verifyToken = async () => {
     try {
-        const response = await api.get('/auth/verify-token')
+        const response = await api.get('/auth/verify-token', { withCredentials: true });
         return response.data;
     } catch (error) {
-        if (axios.isAxiosError(error)) {
-            if (error.response && error.response.status === 401) {
-                console.error('Token expired or invalid:', error.response.data)
-            } else {
-                console.error('Axios error:', error.message)
-            }
+        if (axios.isAxiosError(error) && error.response && error.response.status === 401) {
+            console.error('Token expired or invalid:', error.response.data);
         } else {
-            return error
+            console.error('Unexpected error:',error);
         }
+        return { valid: false };
     }
 }
 

@@ -13,10 +13,10 @@ const Header = ()=>{
 
     const handleLogout = async () => {
         try {
-            await mutate();
-            userAccountDispatch({ type: 'remove', payload: defaultUserAccount });
+            mutate()
+            userAccountDispatch({ type: 'remove', payload: defaultUserAccount })
         } catch (error) {
-            console.error('Logout failed:', error);
+            console.error('Logout failed:', error)
         }
     }
     

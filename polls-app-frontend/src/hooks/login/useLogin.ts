@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useLoginApi } from "../../api/pollingAppApiMock";
 
 export const useLogin = (emailReg:string)=>{
-    const [email,setEmail] = useState(emailReg?emailReg:'')
+    const [email,setEmail] = useState(emailReg || '')
     const [password,setPassword] = useState('')
     const { mutate } = useLoginApi();
 

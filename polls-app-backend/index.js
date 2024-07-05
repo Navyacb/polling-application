@@ -7,6 +7,10 @@ const configDB = require('./config/database')
 const userController = require('./app/controllers/user-controller')
 const {userLoginValidationSchema,userRegisterValidationSchema} = require('./app/helper/user-validation')
 const { authentication } = require('./app/middlewears/authentication')
+const categoryController = require('./app/controllers/category-controller')
+const categoryValidationSchema = require('./app/helper/category-validation')
+const pollsValidationSchema = require('./app/helper/polls-validation')
+const pollsController = require('./app/controllers/polls-controller')
 
 const port = process.env.PORT
 const app = express()
@@ -20,6 +24,9 @@ app.post('/auth/login',checkSchema(userLoginValidationSchema),userController.log
 app.get('/users/account',authentication,userController.account)
 app.get('/auth/verify-token', authentication,userController.verifyToken)
 app.post('/auth/logout',userController.logout)
+app.get('/users/category',categoryController.list)
+app.post('/users/addCategory',authentication,checkSchema(categoryValidationSchema),categoryController.create)
+app.post('/users/poll',authentication,checkSchema(pollsValidationSchema),pollsController.create)
 
 
 app.listen(port,()=>{
