@@ -25,14 +25,14 @@ const Header = ()=>{
         <AppShell>
             <AppShell.Header>
             <Group justify="space-between">
-                <Link to="/"><Title order={1} p={20} size="h1" c="#2d8ca5">Welcome to Polling App</Title></Link>
+                <Link to="/"><Title order={1} p={20} size='1.5rem' c="#2d8ca5" >Welcome to Polling App</Title></Link>
                 {isEmpty(userAccount) || !userAccount._id ? (
-                        <Link to="/login">
-                            <Button m={20} variant="outline" w="8rem" size="md" radius="xl">Login</Button>
+                        <Link to="/authenticate">
+                            <Button m={20} variant="outline" size="md" radius="xl">Create Your Poll</Button>
                         </Link>
                     ) : (
                         <Link to='/'>
-                            <Button m={20} variant="outline" w="8rem" size="md" radius="xl" onClick={handleLogout}>Logout</Button>
+                            <Button m={20} variant="outline" size="md" radius="xl" onClick={handleLogout}>Logout</Button>
                         </Link>
                     )}
             </Group>
