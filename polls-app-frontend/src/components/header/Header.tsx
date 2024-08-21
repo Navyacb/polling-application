@@ -3,7 +3,6 @@ import RouterLinks from '../../RouterLinks';
 import { Link } from 'react-router-dom';
 import { useContext } from 'react';
 import { UserAccountContextData, defaultUserAccount } from '../../state-management/UserAccountContextData';
-import {isEmpty} from 'lodash'
 import { useLogoutApi } from '../../api/pollingAppApiMock';
 
 
@@ -25,8 +24,8 @@ const Header = ()=>{
         <AppShell>
             <AppShell.Header>
             <Group justify="space-between">
-                <Link to="/"><Title order={1} p={20} size='1.5rem' c="#2d8ca5" >Welcome to Polling App</Title></Link>
-                {isEmpty(userAccount) || !userAccount._id ? (
+                <Link to="/"><Title order={1} p={20} c="#2d8ca5">Welcome to Polling App</Title></Link>
+                {!userAccount._id ? (
                         <Link to="/authenticate">
                             <Button m={20} variant="outline" size="md" radius="xl">Create Your Poll</Button>
                         </Link>

@@ -20,7 +20,7 @@ export const defaultUserAccount: IUser = {
     username: '',
     email: '',
     // pollCreated: ,
-  };
+}
 
 export const UserAccountContextData = createContext<IUserAccount>({
     userAccount : defaultUserAccount,

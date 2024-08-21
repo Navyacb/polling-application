@@ -8,7 +8,6 @@ interface IFormValues {
     email: string;
     username?: string;
     password: string;
-    terms: boolean;
 }
 
 export const useAuthenticateForm = ()=>{
@@ -23,7 +22,6 @@ export const useAuthenticateForm = ()=>{
           email: '',
           username: '',
           password: '',
-          terms: true,
         },
     })
 

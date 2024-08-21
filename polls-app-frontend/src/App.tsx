@@ -1,12 +1,14 @@
 import './App.css'
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
+import '@mantine/dates/styles.css';
 import Header from './components/header/Header';
 import { ErrorMessageContextData, IError } from './state-management/ErrorMessageContextData';
 import { useEffect, useMemo, useReducer } from 'react';
 import { IUser, UserAccountContextData, defaultUserAccount } from './state-management/UserAccountContextData';
-import { verifyToken } from './api/pollingAppApiMock';
+import { fetchCategoryList, verifyToken } from './api/pollingAppApiMock';
 import { useQuery } from 'react-query';
+import { CategoryContextData } from './state-management/CategoryContextData';
 import { BrowserRouter } from 'react-router-dom';
 
 function App() {
@@ -42,6 +44,10 @@ const { data, error } = useQuery('verifyToken', verifyToken, {
   refetchOnWindowFocus: false,
 })
 
+const {data:category = []} = useQuery({
+  queryFn : ()=>fetchCategoryList(),
+  queryKey : ["category"],
+})
 
 useEffect(()=>{
   if (data) {
@@ -72,7 +78,9 @@ const userAccountContextValue = useMemo(
       <MantineProvider>
           <ErrorMessageContextData.Provider value = {errorMessageContextValue}>
             <UserAccountContextData.Provider value={userAccountContextValue}>
-              <Header/>
+              <CategoryContextData.Provider value={{category}}>
+                <Header/>
+              </CategoryContextData.Provider>
             </UserAccountContextData.Provider>
           </ErrorMessageContextData.Provider>
       </MantineProvider>

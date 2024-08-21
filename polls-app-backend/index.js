@@ -15,7 +15,10 @@ const pollsController = require('./app/controllers/polls-controller')
 const port = process.env.PORT
 const app = express()
 app.use(express.json())
-app.use(cors({origin : 'http://localhost:5173', credentials : true}))
+app.use(cors({
+    origin : process.env.FRONT_END_URL, 
+    credentials : true
+}))
 app.use(cookieParser())
 configDB()
 

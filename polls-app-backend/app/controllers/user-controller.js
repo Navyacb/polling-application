@@ -50,11 +50,11 @@ userController.login = async(req,res)=>{
         }
   
         const tokenData = { id: user._id }
-        const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY,{expiresIn:'500s'})
+        const token = jwt.sign(tokenData, process.env.JWT_SECRET_KEY,{expiresIn:'5000s'})
         res.cookie("token",token,{
             httpOnly : true,
             sameSite : 'strict',
-            expires : new Date(new Date().getTime() + 500 * 1000),
+            expires : new Date(new Date().getTime() + 5000 * 1000),
             secure: process.env.NODE_ENV === 'production',
         }).json({ message: 'Login successful'})
     }

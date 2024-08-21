@@ -4,6 +4,7 @@ import { useErrorMessage } from "../hooks/errorMessage/useErrorMessage";
 import {pick} from 'lodash'
 import { useContext } from "react";
 import { UserAccountContextData } from "../state-management/UserAccountContextData";
+import { ICategory } from "../state-management/CategoryContextData";
 
 const api = axios.create({
     baseURL: 'http://localhost:3090', 
@@ -93,5 +94,22 @@ export const useLogoutApi = ()=>{
         }
     }
    )
+}
+
+
+export const fetchCategoryList = async()=>{
+    const response = await api.get('/users/category')
+    
+    const catg = response.data.map((ele: ICategory)=>{
+        return {
+            categoryName : ele.categoryName
+        }
+    })
+    return catg
+}
+
+export const addCategory = async(categoryName : string)=>{
+    const response = await api.post('/users/addCategory',{categoryName})
+    return response.data
 }
 
