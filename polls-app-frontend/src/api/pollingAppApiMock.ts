@@ -1,5 +1,6 @@
+import { IPolls } from './../state-management/UserPollsContextData';
 import axios from "axios";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { useErrorMessage } from "../hooks/errorMessage/useErrorMessage";
 import {pick} from 'lodash'
 import { useContext } from "react";
@@ -102,14 +103,63 @@ export const fetchCategoryList = async()=>{
     
     const catg = response.data.map((ele: ICategory)=>{
         return {
-            categoryName : ele.categoryName
+            categoryName : ele.categoryName,
+            _id : ele._id
         }
     })
     return catg
 }
 
-export const addCategory = async(categoryName : string)=>{
-    const response = await api.post('/users/addCategory',{categoryName})
+export const useAddCategory = ()=>{
+    const { errorsDispatch } = useErrorMessage()
+    const queryClient = useQueryClient()
+
+    return useMutation(
+        async (categoryName: string) => {
+            const response = await api.post('/users/addCategory', { categoryName })
+            return response.data;
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries("category");
+            },
+            onError: (error) => {
+                if (axios.isAxiosError(error) && error.response) {
+                    errorsDispatch({ type: 'add', payload: error.response.data.errors })
+                } else {
+                    console.error('Error adding category:', error);
+                }
+            }
+        }
+    )
+}
+
+export const fetchPollsData = async()=>{
+    const response = await api.get('/users/polls')
     return response.data
 }
 
+
+export const useAddPolls = ()=>{
+    const queryClient = useQueryClient()
+    const { errorsDispatch } = useErrorMessage()
+
+    return useMutation(
+        async (poll: IPolls) => {
+            const response = await api.post('/users/addPoll', poll)
+            return response.data;
+        },
+        {
+            onSuccess: () => {
+                queryClient.invalidateQueries("polls");
+            },
+            onError: (error) => {
+                if (axios.isAxiosError(error) && error.response) {
+                    errorsDispatch({ type: 'add', payload: error.response.data.errors })
+                } else {
+                    console.error('Error adding poll:', error);
+                }
+            }
+        }
+    );
+}

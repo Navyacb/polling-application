@@ -11,7 +11,7 @@ const pollSchema = new Schema({
         type: Schema.Types.ObjectId,
         ref:'Category'
     },
-    endData : Date,
+    endDate : Date,
     startDate : Date,
     options : [
         {

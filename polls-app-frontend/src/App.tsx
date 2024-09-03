@@ -2,14 +2,17 @@ import './App.css'
 import { MantineProvider } from '@mantine/core';
 import '@mantine/core/styles.css';
 import '@mantine/dates/styles.css';
+import '@mantine/notifications/styles.css';
 import Header from './components/header/Header';
 import { ErrorMessageContextData, IError } from './state-management/ErrorMessageContextData';
 import { useEffect, useMemo, useReducer } from 'react';
 import { IUser, UserAccountContextData, defaultUserAccount } from './state-management/UserAccountContextData';
-import { fetchCategoryList, verifyToken } from './api/pollingAppApiMock';
+import { fetchCategoryList, fetchPollsData, verifyToken } from './api/pollingAppApiMock';
 import { useQuery } from 'react-query';
 import { CategoryContextData } from './state-management/CategoryContextData';
 import { BrowserRouter } from 'react-router-dom';
+import { UserPollsContextData } from './state-management/UserPollsContextData';
+import { Notifications } from '@mantine/notifications'
 
 function App() {
 
@@ -39,6 +42,7 @@ function App() {
   const [userAccount,userAccountDispatch] = useReducer(userAccountReducer,defaultUserAccount)
 
 
+
 const { data, error } = useQuery('verifyToken', verifyToken, {
   retry: false, 
   refetchOnWindowFocus: false,
@@ -47,6 +51,11 @@ const { data, error } = useQuery('verifyToken', verifyToken, {
 const {data:category = []} = useQuery({
   queryFn : ()=>fetchCategoryList(),
   queryKey : ["category"],
+})
+
+const {data:polls = []}= useQuery({
+  queryFn : ()=>fetchPollsData(),
+  queryKey : ["polls"]
 })
 
 useEffect(()=>{
@@ -76,10 +85,13 @@ const userAccountContextValue = useMemo(
   return (
     <BrowserRouter>
       <MantineProvider>
+        <Notifications/>
           <ErrorMessageContextData.Provider value = {errorMessageContextValue}>
             <UserAccountContextData.Provider value={userAccountContextValue}>
               <CategoryContextData.Provider value={{category}}>
-                <Header/>
+                <UserPollsContextData.Provider value={{polls}}>
+                  <Header/>
+                </UserPollsContextData.Provider>
               </CategoryContextData.Provider>
             </UserAccountContextData.Provider>
           </ErrorMessageContextData.Provider>

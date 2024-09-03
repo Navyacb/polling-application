@@ -22,5 +22,15 @@ pollsController.create = async(req,res)=>{
 
 }
 
+pollsController.list = async(req,res)=>{
+    try{
+        const polls = await Polls.find()
+        res.send(polls)
+    }
+    catch(error){
+        res.status(500).json(error)
+    }
+}
+
 
 module.exports = pollsController

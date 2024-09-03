@@ -29,7 +29,8 @@ app.get('/auth/verify-token', authentication,userController.verifyToken)
 app.post('/auth/logout',userController.logout)
 app.get('/users/category',categoryController.list)
 app.post('/users/addCategory',authentication,checkSchema(categoryValidationSchema),categoryController.create)
-app.post('/users/poll',authentication,checkSchema(pollsValidationSchema),pollsController.create)
+app.post('/users/addPoll',authentication,checkSchema(pollsValidationSchema),pollsController.create)
+app.get('/users/polls',pollsController.list)
 
 
 app.listen(port,()=>{
