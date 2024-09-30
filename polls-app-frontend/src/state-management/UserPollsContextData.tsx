@@ -9,10 +9,11 @@ export interface IPolls {
     category : string,
     startDate : Date | null,
     endDate : Date  | null,
-    options : IOptions[]
+    options : IOptions[],
+    created : string
 }
 
-interface IPollData {
+export interface IPollData {
     polls : IPolls[],
 }
 

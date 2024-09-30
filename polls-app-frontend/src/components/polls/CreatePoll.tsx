@@ -3,14 +3,16 @@ import CreatableSelect from 'react-select/creatable'
 import { Button, CloseButton, Group, Input, List, ListItem, Paper, Text, Textarea } from "@mantine/core";
 import { usePollsCreation } from "../../hooks/polls/usePollsCreation";
 import { useErrorMessage } from "../../hooks/errorMessage/useErrorMessage";
+import { useEffect } from "react";
 import { IPolls } from "../../state-management/UserPollsContextData";
 
 
 interface CreatePollProps {
-    close: () => void
+    close: () => void,
+    myPollDispatch: React.Dispatch<{ type: string; payload: IPolls[]}>
   }
 
-const CreatePoll : React.FC<CreatePollProps>= ({close})=>{
+const CreatePoll : React.FC<CreatePollProps>= ({close,myPollDispatch})=>{
 
     const {
         categoryList,
@@ -21,13 +23,12 @@ const CreatePoll : React.FC<CreatePollProps>= ({close})=>{
         handleOptionChange,
         form,
     options} = usePollsCreation()
-    const {errors} = useErrorMessage()
+    const {errors,errorsDispatch} = useErrorMessage()
 
-
-  const handleSubmit = async (values: IPolls) => {
-    await handleFormSubmit(values)
-    close()
-  }
+  
+  useEffect(()=>{
+    errorsDispatch({type:'clear',payload:[]})
+},[errorsDispatch])
 
 
     return (
@@ -39,7 +40,7 @@ const CreatePoll : React.FC<CreatePollProps>= ({close})=>{
                         })}
                     </List> 
                     }
-                    <form onSubmit={form.onSubmit((values) => handleSubmit(values))}>
+                    <form onSubmit={form.onSubmit((values) => handleFormSubmit(values , close , myPollDispatch))}>
                             <Textarea
                                 required
                                 label="Question"
@@ -49,20 +50,23 @@ const CreatePoll : React.FC<CreatePollProps>= ({close})=>{
                                 radius="md"
                             /><br/>
                             <CreatableSelect
+                                required
                                 placeholder="Select the poll category"
                                 options={categoryList}
                                 value={categoryList.find(c => c.value === form.values.category)}
                                 onChange={(newValue) => {form.setFieldValue('category', newValue ? newValue.value : '')}}
                                 onCreateOption={handleCreateCategory}
                             />    <br/>               
-                            <DateTimePicker 
+                            <DateTimePicker
+                            required 
                                 label="Start Date and Time" 
                                 valueFormat="YYYY-MM-DD HH:mm"
                                 value={form.values.startDate }
                                 onChange={(value) =>{form.setFieldValue('startDate', value)}} 
                                 placeholder="Pick date and time"
                              /><br/>
-                            <DateTimePicker 
+                            <DateTimePicker
+                            required 
                                 label="End Date and Time" 
                                 valueFormat="YYYY-MM-DD HH:mm"
                                 value={form.values.endDate} 

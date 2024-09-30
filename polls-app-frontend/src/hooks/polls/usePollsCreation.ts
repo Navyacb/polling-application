@@ -4,10 +4,12 @@ import { useContext, useState } from "react";
 import { useForm } from "@mantine/form";
 import { CategoryContextData, ICategory } from "../../state-management/CategoryContextData";
 import { IOptions, IPolls } from "../../state-management/UserPollsContextData";
+import { useErrorMessage } from "../errorMessage/useErrorMessage";
 
 export const usePollsCreation = ()=>{
     const {category} = useContext(CategoryContextData)
     const [options, setOptions] = useState<IOptions[]>([{optionText:''},{optionText:''}])
+    const {errorsDispatch} = useErrorMessage()
 
     const mutationCategory = useAddCategory()
 
@@ -19,11 +21,12 @@ export const usePollsCreation = ()=>{
           category: '',
           startDate: null,
           endDate:null ,
-          options:[]
+          options:[],
+          created:''
         },
     })
 
-    const handleFormSubmit = async (values: IPolls)=>{
+    const handleFormSubmit = async (values: IPolls, close:() => void , myPollDispatch : React.Dispatch<{ type: string; payload: IPolls[]}>)=>{
         try{
             const pollData = { ...values, 
                 options,
@@ -31,14 +34,16 @@ export const usePollsCreation = ()=>{
             const catId = category.find(cat=> cat.categoryName === pollData.category)
             const poll = {...pollData,category:catId?._id ||''}
             await mutationPolls.mutateAsync(poll)
+            errorsDispatch({type:'clear',payload:[]})
             notifications.show({
                 title: 'Poll Added',
                 message: 'Your poll has been added successfully!',
                 color: 'green',
             });
+
+            myPollDispatch({type:'Update',payload:[poll]})
             close()
         }catch(error){
-            console.log(error)
             notifications.show({
                 title: 'Error',
                 message: 'There was an error adding your poll.',

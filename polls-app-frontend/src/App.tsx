@@ -7,7 +7,7 @@ import Header from './components/header/Header';
 import { ErrorMessageContextData, IError } from './state-management/ErrorMessageContextData';
 import { useEffect, useMemo, useReducer } from 'react';
 import { IUser, UserAccountContextData, defaultUserAccount } from './state-management/UserAccountContextData';
-import { fetchCategoryList, fetchPollsData, verifyToken } from './api/pollingAppApiMock';
+import { fetchCategoryList, fetchActivePollsData, verifyToken } from './api/pollingAppApiMock';
 import { useQuery } from 'react-query';
 import { CategoryContextData } from './state-management/CategoryContextData';
 import { BrowserRouter } from 'react-router-dom';
@@ -54,7 +54,7 @@ const {data:category = []} = useQuery({
 })
 
 const {data:polls = []}= useQuery({
-  queryFn : ()=>fetchPollsData(),
+  queryFn : ()=>fetchActivePollsData(),
   queryKey : ["polls"]
 })
 

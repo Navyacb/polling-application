@@ -22,9 +22,19 @@ pollsController.create = async(req,res)=>{
 
 }
 
-pollsController.list = async(req,res)=>{
+pollsController.activePolls = async(req,res)=>{
     try{
-        const polls = await Polls.find()
+        const polls = await Polls.find({endDate : {$gte : new Date()}})
+        res.send(polls)
+    }
+    catch(error){
+        res.status(500).json(error)
+    }
+}
+
+pollsController.myPolls = async(req,res)=>{
+    try{
+        const polls = await Polls.find({created : req.user.id})
         res.send(polls)
     }
     catch(error){

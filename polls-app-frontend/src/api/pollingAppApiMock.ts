@@ -134,9 +134,33 @@ export const useAddCategory = ()=>{
     )
 }
 
-export const fetchPollsData = async()=>{
-    const response = await api.get('/users/polls')
-    return response.data
+export const fetchActivePollsData = async()=>{
+    const response = await api.get('/users/activePolls')
+    const filteredData = response.data.map((poll : IPolls)=>{
+        return {
+            question: poll.question,
+            category: poll.category,
+            startDate: poll.startDate,
+            endDate: poll.endDate,
+            options : poll.options
+        }
+    })
+    return filteredData
+}
+
+
+export const fetchMyPollsData = async()=>{
+    const response = await api.get('/users/myPolls')
+    const filteredData = response.data.map((poll : IPolls)=>{
+        return {
+            question: poll.question,
+            category: poll.category,
+            startDate: poll.startDate,
+            endDate: poll.endDate,
+            options : poll.options
+        }
+    })
+    return filteredData
 }
 
 

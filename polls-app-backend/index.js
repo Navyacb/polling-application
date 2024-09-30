@@ -11,6 +11,7 @@ const categoryController = require('./app/controllers/category-controller')
 const categoryValidationSchema = require('./app/helper/category-validation')
 const pollsValidationSchema = require('./app/helper/polls-validation')
 const pollsController = require('./app/controllers/polls-controller')
+const voteCltr = require('./app/controllers/vote-controller')
 
 const port = process.env.PORT
 const app = express()
@@ -30,7 +31,9 @@ app.post('/auth/logout',userController.logout)
 app.get('/users/category',categoryController.list)
 app.post('/users/addCategory',authentication,checkSchema(categoryValidationSchema),categoryController.create)
 app.post('/users/addPoll',authentication,checkSchema(pollsValidationSchema),pollsController.create)
-app.get('/users/polls',pollsController.list)
+app.get('/users/activePolls',pollsController.activePolls)
+app.get('/users/myPolls',authentication,pollsController.myPolls)
+app.post('users/polls/vote/:pollId',authentication,voteCltr.create)
 
 
 app.listen(port,()=>{

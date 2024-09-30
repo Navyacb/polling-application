@@ -57,7 +57,7 @@ const pollsValidationSchema = {
     },
     category:{
         isMongoId : {
-            errorMessage:'Should have a valid category id'
+            errorMessage:'Should have a valid category selected'
         },
     },
     options:{
